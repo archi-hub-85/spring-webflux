@@ -1,0 +1,17 @@
+<!DOCTYPE configuration>
+<configuration>
+
+    <appender name="file" class="ch.qos.logback.core.FileAppender">
+        <file>spring-webflux.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <logger name="ru.akh.spring_webflux" level="debug" />
+
+    <root level="info">
+        <appender-ref ref="file" />
+    </root>
+
+</configuration>
