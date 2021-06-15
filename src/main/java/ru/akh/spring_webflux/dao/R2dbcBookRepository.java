@@ -1,5 +1,6 @@
 package ru.akh.spring_webflux.dao;
 
+import java.nio.ByteBuffer;
 import java.util.function.Function;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,15 +104,31 @@ public class R2dbcBookRepository implements BookRepository {
 
     @Override
     public Mono<BookContent> getContent(long id) {
-        // TODO Auto-generated method stub
-        return null;
+        return client.sql(
+                "select ID, FILENAME, MIMETYPE, CONTENT, LENGTH(CONTENT) as \"SIZE\" from BOOKS where ID = :id")
+                .bind("id", id)
+                .map(row -> {
+                    BookContent content = new BookContent();
+                    content.setId(row.get("id", Integer.class).longValue());
+                    content.setFileName(row.get("filename", String.class));
+                    content.setMimeType(row.get("mimetype", String.class));
+                    content.setContent(row.get("content", ByteBuffer.class).array());
+                    content.setSize(row.get("size", Long.class));
+
+                    return content;
+                })
+                .one()
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new BookNotFoundException(id))));
     }
 
     @Override
     @Transactional
     public Mono<Void> putContent(BookContent content) {
-        // TODO Auto-generated method stub
-        return null;
+        long bookId = content.getId();
+        return template.update(content)
+                .onErrorResume(new RowNotExistPredicate("BOOKS", bookId),
+                        ex -> Mono.error(new BookNotFoundException(bookId)))
+                .then();
     }
 
 }

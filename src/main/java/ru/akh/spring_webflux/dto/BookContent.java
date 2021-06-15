@@ -1,7 +1,10 @@
 package ru.akh.spring_webflux.dto;
 
+import org.springframework.data.annotation.Id;
+
 public class BookContent {
 
+    @Id
     private long id;
 
     private String fileName;

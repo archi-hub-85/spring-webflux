@@ -5,16 +5,20 @@ import java.util.List;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.codec.CodecCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.r2dbc.config.AbstractR2dbcConfiguration;
 import org.springframework.data.relational.core.mapping.NamingStrategy;
+import org.springframework.http.codec.DecoderHttpMessageReader;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import io.r2dbc.spi.ConnectionFactory;
+import ru.akh.spring_webflux.controller.LongDecoder;
+import ru.akh.spring_webflux.dao.BookContentWriteConverter;
 import ru.akh.spring_webflux.dao.BookNamingStrategy;
 import ru.akh.spring_webflux.dao.BookReadConverter;
 import ru.akh.spring_webflux.dao.BookWriteConverter;
@@ -24,6 +28,19 @@ public class Application {
 
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
+    }
+
+    @Configuration(proxyBeanMethods = false)
+    public static class MyCodecsConfiguration {
+
+        @Bean
+        public CodecCustomizer myCodecCustomizer() {
+            return (configurer) -> {
+                // configurer.registerDefaults(false);
+                configurer.customCodecs().register(new DecoderHttpMessageReader<Long>(new LongDecoder()));
+            };
+        }
+
     }
 
     @Configuration // (proxyBeanMethods = false)
@@ -59,7 +76,8 @@ public class Application {
 
         @Override
         protected List<Object> getCustomConverters() {
-            return Arrays.asList(BookReadConverter.INSTANCE, BookWriteConverter.INSTANCE);
+            return Arrays.asList(BookReadConverter.INSTANCE, BookWriteConverter.INSTANCE,
+                    BookContentWriteConverter.INSTANCE);
         }
 
     }
