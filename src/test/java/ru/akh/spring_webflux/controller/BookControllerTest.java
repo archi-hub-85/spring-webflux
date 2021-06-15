@@ -15,7 +15,7 @@ import org.springframework.test.web.reactive.server.WebTestClient.ResponseSpec;
 import ru.akh.spring_webflux.dto.Author;
 import ru.akh.spring_webflux.dto.Book;
 
-@ActiveProfiles("r2dbc")
+@ActiveProfiles("r2dbc_template")
 public class BookControllerTest extends AbstractControllerTest {
 
     @Test

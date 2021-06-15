@@ -6,7 +6,12 @@ import org.springframework.r2dbc.core.Parameter;
 
 import ru.akh.spring_webflux.dto.Book;
 
-public class BookWriteConterter implements Converter<Book, OutboundRow> {
+public class BookWriteConverter implements Converter<Book, OutboundRow> {
+
+    public static final BookWriteConverter INSTANCE = new BookWriteConverter();
+
+    private BookWriteConverter() {
+    }
 
     @Override
     public OutboundRow convert(Book source) {

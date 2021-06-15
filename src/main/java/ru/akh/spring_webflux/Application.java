@@ -16,7 +16,8 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import io.r2dbc.spi.ConnectionFactory;
 import ru.akh.spring_webflux.dao.BookNamingStrategy;
-import ru.akh.spring_webflux.dao.BookWriteConterter;
+import ru.akh.spring_webflux.dao.BookReadConverter;
+import ru.akh.spring_webflux.dao.BookWriteConverter;
 
 @SpringBootApplication
 public class Application {
@@ -42,7 +43,7 @@ public class Application {
     }
 
     @Configuration // (proxyBeanMethods = false)
-    @Profile("r2dbc")
+    @Profile({ "r2dbc", "r2dbc_template" })
     public static class R2dbcConfig extends AbstractR2dbcConfiguration {
 
         @Bean
@@ -58,7 +59,7 @@ public class Application {
 
         @Override
         protected List<Object> getCustomConverters() {
-            return Arrays.asList(new BookWriteConterter());
+            return Arrays.asList(BookReadConverter.INSTANCE, BookWriteConverter.INSTANCE);
         }
 
     }
