@@ -86,15 +86,19 @@ public class R2dbcTemplateBookRepository implements BookRepository {
 
     @Override
     public Mono<BookContent> getContent(long id) {
-        // TODO Auto-generated method stub
-        return null;
+        return template.select(BookContent.class).from("BOOKS_WITH_CONTENT")
+                .matching(Query.query(Criteria.where("id").is(id))).one()
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new BookNotFoundException(id))));
     }
 
     @Override
     @Transactional
     public Mono<Void> putContent(BookContent content) {
-        // TODO Auto-generated method stub
-        return null;
+        long bookId = content.getId();
+        return template.update(content)
+                .onErrorResume(new RowNotExistPredicate("BOOKS", bookId),
+                        ex -> Mono.error(new BookNotFoundException(bookId)))
+                .then();
     }
 
 }

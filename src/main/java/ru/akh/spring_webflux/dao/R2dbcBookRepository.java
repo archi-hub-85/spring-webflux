@@ -1,8 +1,5 @@
 package ru.akh.spring_webflux.dao;
 
-import java.nio.ByteBuffer;
-import java.util.function.Function;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
@@ -10,9 +7,10 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.r2dbc.spi.Row;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import ru.akh.spring_webflux.dao.converter.BookContentReadConverter;
+import ru.akh.spring_webflux.dao.converter.BookReadConverter;
 import ru.akh.spring_webflux.dao.exception.AuthorNotFoundException;
 import ru.akh.spring_webflux.dao.exception.BookNotFoundException;
 import ru.akh.spring_webflux.dto.Author;
@@ -37,14 +35,12 @@ public class R2dbcBookRepository implements BookRepository {
      * template = new R2dbcEntityTemplate(connectionFactory); }
      */
 
-    private static final Function<Row, Book> BOOK_MAPPING = BookReadConverter.INSTANCE::convert;
-
     @Override
     public Mono<Book> get(long id) {
         return client.sql(
                 "select B.ID, B.TITLE, B.YEAR, B.AUTHOR_ID, A.NAME from BOOKS B inner join AUTHORS A on B.AUTHOR_ID = A.ID where B.ID = :id")
                 .bind("id", id)
-                .map(BOOK_MAPPING)
+                .map(BookReadConverter.INSTANCE::convert)
                 .one()
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new BookNotFoundException(id))));
     }
@@ -89,7 +85,7 @@ public class R2dbcBookRepository implements BookRepository {
                         + fieldName + " LIMIT :limit")
                 .bind("limit", limit)
                 // .filter(statement -> statement.fetchSize(limit))
-                .map(BOOK_MAPPING)
+                .map(BookReadConverter.INSTANCE::convert)
                 .all();
     }
 
@@ -98,7 +94,7 @@ public class R2dbcBookRepository implements BookRepository {
         return client.sql(
                 "select B.ID, B.TITLE, B.YEAR, B.AUTHOR_ID, A.NAME from BOOKS B inner join AUTHORS A on B.AUTHOR_ID = A.ID where A.NAME = :name")
                 .bind("name", author)
-                .map(BOOK_MAPPING)
+                .map(BookReadConverter.INSTANCE::convert)
                 .all();
     }
 
@@ -107,16 +103,7 @@ public class R2dbcBookRepository implements BookRepository {
         return client.sql(
                 "select ID, FILENAME, MIMETYPE, CONTENT, LENGTH(CONTENT) as \"SIZE\" from BOOKS where ID = :id")
                 .bind("id", id)
-                .map(row -> {
-                    BookContent content = new BookContent();
-                    content.setId(row.get("id", Integer.class).longValue());
-                    content.setFileName(row.get("filename", String.class));
-                    content.setMimeType(row.get("mimetype", String.class));
-                    content.setContent(row.get("content", ByteBuffer.class).array());
-                    content.setSize(row.get("size", Long.class));
-
-                    return content;
-                })
+                .map(BookContentReadConverter.INSTANCE::convert)
                 .one()
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new BookNotFoundException(id))));
     }

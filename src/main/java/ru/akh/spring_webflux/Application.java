@@ -18,10 +18,11 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import io.r2dbc.spi.ConnectionFactory;
 import ru.akh.spring_webflux.controller.LongDecoder;
-import ru.akh.spring_webflux.dao.BookContentWriteConverter;
 import ru.akh.spring_webflux.dao.BookNamingStrategy;
-import ru.akh.spring_webflux.dao.BookReadConverter;
-import ru.akh.spring_webflux.dao.BookWriteConverter;
+import ru.akh.spring_webflux.dao.converter.BookContentReadConverter;
+import ru.akh.spring_webflux.dao.converter.BookContentWriteConverter;
+import ru.akh.spring_webflux.dao.converter.BookReadConverter;
+import ru.akh.spring_webflux.dao.converter.BookWriteConverter;
 
 @SpringBootApplication
 public class Application {
@@ -77,7 +78,7 @@ public class Application {
         @Override
         protected List<Object> getCustomConverters() {
             return Arrays.asList(BookReadConverter.INSTANCE, BookWriteConverter.INSTANCE,
-                    BookContentWriteConverter.INSTANCE);
+                    BookContentReadConverter.INSTANCE, BookContentWriteConverter.INSTANCE);
         }
 
     }

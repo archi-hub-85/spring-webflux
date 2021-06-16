@@ -1,4 +1,4 @@
-package ru.akh.spring_webflux.dao;
+package ru.akh.spring_webflux.dao.converter;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.r2dbc.mapping.OutboundRow;

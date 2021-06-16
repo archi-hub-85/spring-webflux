@@ -21,3 +21,9 @@ create view
 as
     select B.ID, B.TITLE, B.YEAR, B.AUTHOR_ID, A.NAME from BOOKS B inner join AUTHORS A on B.AUTHOR_ID = A.ID
 ;
+
+create view
+    BOOKS_WITH_CONTENT
+as
+    select ID, FILENAME, MIMETYPE, CONTENT, LENGTH(CONTENT) as "SIZE" from BOOKS
+;
