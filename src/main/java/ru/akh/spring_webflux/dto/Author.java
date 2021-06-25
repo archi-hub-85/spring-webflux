@@ -1,6 +1,6 @@
 package ru.akh.spring_webflux.dto;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.data.annotation.Id;
 
@@ -9,7 +9,7 @@ public class Author {
     @Id
     private Long id;
 
-    @NotNull
+    @NotBlank
     private String name;
 
     public Long getId() {

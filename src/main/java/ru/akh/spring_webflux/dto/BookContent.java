@@ -1,16 +1,26 @@
 package ru.akh.spring_webflux.dto;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.springframework.data.annotation.Id;
 
 public class BookContent {
 
     @Id
+    @Min(1)
     private long id;
 
+    @NotBlank
     private String fileName;
 
+    @NotBlank
     private String mimeType;
 
+    @NotNull
+    @Size(min = 1)
     private byte[] content;
 
     private long size;

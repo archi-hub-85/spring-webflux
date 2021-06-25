@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import reactor.core.publisher.Mono;
 import ru.akh.spring_webflux.dao.exception.AuthorNotFoundException;
+import ru.akh.spring_webflux.dao.exception.BookContentNotFoundException;
 import ru.akh.spring_webflux.dao.exception.BookNotFoundException;
 import ru.akh.spring_webflux.dto.Author;
 import ru.akh.spring_webflux.dto.Book;
@@ -49,7 +50,7 @@ abstract class AbstractR2dbcBookRepository implements BookRepository {
         long bookId = content.getId();
         return template.update(content)
                 .onErrorResume(new RowNotExistPredicate("BOOKS", bookId),
-                        ex -> Mono.error(new BookNotFoundException(bookId)))
+                        ex -> Mono.error(new BookContentNotFoundException(bookId)))
                 .then();
     }
 

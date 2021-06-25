@@ -13,8 +13,6 @@ import org.springframework.data.r2dbc.config.AbstractR2dbcConfiguration;
 import org.springframework.data.relational.core.mapping.NamingStrategy;
 import org.springframework.http.codec.DecoderHttpMessageReader;
 import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
-import org.springframework.security.config.web.server.ServerHttpSecurity;
-import org.springframework.security.web.server.SecurityWebFilterChain;
 
 import io.r2dbc.spi.ConnectionFactory;
 import ru.akh.spring_webflux.controller.LongDecoder;
@@ -48,15 +46,6 @@ public class Application {
     // @EnableWebFluxSecurity
     @EnableReactiveMethodSecurity
     public static class SecurityConfig {
-
-        @Bean
-        public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
-            return http
-                    .authorizeExchange().anyExchange().authenticated().and()
-                    .httpBasic().and()
-                    // .formLogin()
-                    .build();
-        }
 
     }
 

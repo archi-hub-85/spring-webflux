@@ -9,6 +9,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import ru.akh.spring_webflux.dao.converter.BookContentReadConverter;
 import ru.akh.spring_webflux.dao.converter.BookReadConverter;
+import ru.akh.spring_webflux.dao.exception.BookContentNotFoundException;
 import ru.akh.spring_webflux.dao.exception.BookNotFoundException;
 import ru.akh.spring_webflux.dto.Book;
 import ru.akh.spring_webflux.dto.BookContent;
@@ -71,7 +72,7 @@ public class R2dbcBookRepository extends AbstractR2dbcBookRepository {
                 .bind("id", id)
                 .map(BookContentReadConverter.INSTANCE::convert)
                 .one()
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new BookNotFoundException(id))));
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new BookContentNotFoundException(id))));
     }
 
 }

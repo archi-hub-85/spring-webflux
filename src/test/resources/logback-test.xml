@@ -15,7 +15,12 @@
     </appender>
 
     <logger name="org.springframework" level="info" />
+    <logger name="org.springframework.boot" level="info" />
+    <logger name="org.springframework.data" level="info" />
     <logger name="org.springframework.security" level="info" />
+    <logger name="org.springframework.web" level="info" />
+
+    <logger name="org.springframework.r2dbc" level="info" />
 
     <logger name="ru.akh.spring_webflux" level="debug" />
     <logger name="ru.akh.spring_webflux.interceptor.DebugInterceptor" level="trace" />

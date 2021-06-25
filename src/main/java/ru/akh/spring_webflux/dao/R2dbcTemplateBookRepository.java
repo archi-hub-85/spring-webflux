@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import ru.akh.spring_webflux.dao.exception.BookContentNotFoundException;
 import ru.akh.spring_webflux.dao.exception.BookNotFoundException;
 import ru.akh.spring_webflux.dto.Book;
 import ru.akh.spring_webflux.dto.BookContent;
@@ -53,7 +54,7 @@ public class R2dbcTemplateBookRepository extends AbstractR2dbcBookRepository {
     public Mono<BookContent> getContent(long id) {
         return template.select(BookContent.class).from("BOOKS_WITH_CONTENT")
                 .matching(Query.query(Criteria.where("id").is(id))).one()
-                .switchIfEmpty(Mono.defer(() -> Mono.error(new BookNotFoundException(id))));
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new BookContentNotFoundException(id))));
     }
 
 }

@@ -12,6 +12,10 @@ public class DebugInterceptor implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
+        if (!logger.isTraceEnabled()) {
+            return invocation.proceed();
+        }
+
         Class<?> targetClass = AopUtils.getTargetClass(invocation.getThis());
         String className = targetClass.getName();
         String methodName = AopUtils.getMostSpecificMethod(invocation.getMethod(), targetClass).getName();
@@ -22,7 +26,7 @@ public class DebugInterceptor implements MethodInterceptor {
             logger.trace("Method {}#{}(...) returns {}", className, methodName, result);
             return result;
         } catch (Throwable ex) {
-            logger.trace("Method {}#{}(...) throwns exception", className, methodName, ex);
+            logger.trace("Method {}#{}(...) throwns exception {}", className, methodName, ex.toString());
             throw ex;
         }
     }

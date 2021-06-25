@@ -1,6 +1,7 @@
 package ru.akh.spring_webflux.dto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.data.annotation.Id;
@@ -17,7 +18,7 @@ public class Book {
     @Id
     private Long id;
 
-    @NotNull
+    @NotBlank
     private String title;
 
     private int year;
